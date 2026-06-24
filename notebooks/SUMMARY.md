@@ -173,7 +173,99 @@ XGBoost GKF-tuned: 52 features (MAE=263.0) vs 19 features (MAE=265.4) → ต่
 
 ---
 
-## 6. References
+## 6. Future Work
+
+### 1) Outlier Removal — Box Plot แทนเกณฑ์ 500 kcal
+
+ปัจจุบัน filter ด้วย `calories < 500 kcal` ซึ่งเป็นเกณฑ์ตายตัว (hard threshold)
+
+**ที่ควรลองทำต่อ:**
+- Plot box plot ของ `calories` แยกตาม user หรือ gender
+- ตัด outlier ด้วย IQR method แทน เช่น `Q1 - 1.5×IQR` และ `Q3 + 1.5×IQR`
+- เปรียบเทียบ MAE ก่อน/หลังตัด outlier แบบ data-driven
+
+```python
+Q1 = df['calories'].quantile(0.25)
+Q3 = df['calories'].quantile(0.75)
+IQR = Q3 - Q1
+df = df[(df['calories'] >= Q1 - 1.5*IQR) & (df['calories'] <= Q3 + 1.5*IQR)]
+```
+
+**ข้อดี:** ไม่ต้องสมมติเกณฑ์เอง ใช้ distribution ของข้อมูลจริงแทน
+
+### 2) Age — ลอง One-Hot Encoding
+
+ปัจจุบัน `age` ถูกตัดออกจาก 15 features เพราะ importance ต่ำเมื่อ encode เป็น binary (0/1)
+
+**ที่ควรลองทำต่อ:**
+- One-Hot encode `age` (`"<30"` → `age_lt30`, `">=30"` → `age_gte30`) แทน binary
+- เพิ่มเข้า feature set แล้วเปรียบเทียบ MAE กับ 15 features เดิม
+
+```python
+df = pd.get_dummies(df, columns=['age'], prefix='age')
+# ได้คอลัมน์ใหม่: age_<30, age_>=30
+```
+
+**หมายเหตุ:** `age` มีแค่ 2 ค่า → One-Hot กับ binary encoding ให้ผลเหมือนกัน แต่ถ้า dataset อนาคตมีช่วงอายุละเอียดกว่า (`<20`, `20-30`, `30-40`, `>=40`) One-Hot จะมีประโยชน์ชัดเจนกว่า
+
+### 3) Scaling vs No Scaling — เปรียบเทียบ MAE
+
+ปัจจุบันใช้ StandardScaler กับทุก model แต่ tree-based models (RF, XGBoost, LightGBM, GradientBoosting) ไม่จำเป็นต้องใช้ scaling เพราะ split-based ไม่ขึ้นกับ scale
+
+**ที่ควรลองทำต่อ:**
+- ทดสอบ 3 แบบ: `StandardScaler` vs `RobustScaler` vs `No Scaling`
+- เปรียบเทียบ MAE แยกตาม model group (linear vs tree-based)
+
+| Model Group | คาดว่า Scaling ช่วยไหม? |
+|---|---|
+| Linear, Ridge, Lasso, ElasticNet | ✅ ช่วยมาก |
+| RF, GBM, XGBoost, LightGBM | ❌ แทบไม่ต่าง |
+
+```python
+from sklearn.preprocessing import StandardScaler, RobustScaler
+from sklearn.pipeline import Pipeline
+
+# With scaling
+pipe_scaled = Pipeline([('imputer', imputer), ('scaler', StandardScaler()), ('model', model)])
+
+# No scaling
+pipe_noscale = Pipeline([('imputer', imputer), ('model', model)])
+```
+
+**ประโยชน์:** ลด complexity ของ pipeline สำหรับ tree-based models และยืนยันว่า StandardScaler ที่ใช้อยู่จำเป็นจริงๆ หรือเปล่า
+
+### 4) Include Gender ใน 15 Features แล้ว Retrain
+
+จากการทดสอบเบื้องต้น พบว่าการเพิ่ม `gender_binary` เข้าไปใน feature set ช่วยลด MAE ได้อย่างมีนัยสำคัญ
+
+| Feature Set | GKF MAE |
+|---|---|
+| 15 features (ไม่มี gender) | 287 kcal |
+| 16 features (+ gender) | **219 kcal** |
+| ดีขึ้น | **-68 kcal (-24%)** |
+
+**ที่ควรทำต่อ:**
+- เพิ่ม `gender_binary` (`MALE` → 1, `FEMALE` → 0) เข้าใน `feature_cols` ใน `train.py`
+- Retrain และ save models ใหม่ทั้งหมด
+- เปรียบเทียบ MAE ครบทุก 7 strategies ไม่ใช่แค่ GKF
+
+```python
+df['gender_binary'] = (df['gender'] == 'MALE').astype(int)
+
+feature_cols = [
+    'steps', 'distance', 'very_active_minutes', 'moderately_active_minutes',
+    'lightly_active_minutes', 'TotalActiveMinutes', 'ActiveRatio', 'StepsPerActiveMin',
+    'bpm', 'resting_hr', 'hr_zone_cardio', 'filteredDemographicVO2Max',
+    'nightly_temperature', 'daily_temperature_variation', 'bmi',
+    'gender_binary',  # เพิ่มใหม่
+]
+```
+
+**เหตุผลที่ gender ช่วย:** GKF test บน user ใหม่ที่ไม่เคยเห็น — gender เป็น strong prior สำหรับ baseline calories (Male ~2,418 kcal vs Female ~1,850 kcal ต่างกัน ~568 kcal)
+
+---
+
+## 7. References
 
 ### LifeSnaps Dataset
 - Yfantidou et al. (2022) — *"LifeSnaps, a 4-month multi-modal dataset capturing unobtrusive snapshots of our lives in the wild"* — **Scientific Data (Nature)**
