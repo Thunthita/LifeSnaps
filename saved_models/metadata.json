@@ -1,0 +1,66 @@
+{
+  "feature_cols": [
+    "steps",
+    "distance",
+    "very_active_minutes",
+    "moderately_active_minutes",
+    "lightly_active_minutes",
+    "TotalActiveMinutes",
+    "ActiveRatio",
+    "StepsPerActiveMin",
+    "bpm",
+    "resting_hr",
+    "hr_zone_cardio",
+    "filteredDemographicVO2Max",
+    "nightly_temperature",
+    "daily_temperature_variation",
+    "bmi"
+  ],
+  "n_features": 15,
+  "target": "calories",
+  "n_samples": 6638,
+  "n_users": 71,
+  "tuning": "Optuna GroupKFold (3 splits, 20 trials)",
+  "models": {
+    "Linear Regression": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/linear_regression_gkf_tuned.joblib",
+      "gkf_mae": 297.68,
+      "gkf_r2": 0.603
+    },
+    "Ridge": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/ridge_gkf_tuned.joblib",
+      "gkf_mae": 297.45,
+      "gkf_r2": 0.6182
+    },
+    "Lasso": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/lasso_gkf_tuned.joblib",
+      "gkf_mae": 297.68,
+      "gkf_r2": 0.603
+    },
+    "ElasticNet": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/elasticnet_gkf_tuned.joblib",
+      "gkf_mae": 297.47,
+      "gkf_r2": 0.6143
+    },
+    "Random Forest": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/random_forest_gkf_tuned.joblib",
+      "gkf_mae": 277.22,
+      "gkf_r2": 0.6513
+    },
+    "Gradient Boosting": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/gradient_boosting_gkf_tuned.joblib",
+      "gkf_mae": 276.94,
+      "gkf_r2": 0.6476
+    },
+    "XGBoost": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/xgboost_gkf_tuned.joblib",
+      "gkf_mae": 283.01,
+      "gkf_r2": 0.6374
+    },
+    "LightGBM": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/lightgbm_gkf_tuned.joblib",
+      "gkf_mae": 284.58,
+      "gkf_r2": 0.6324
+    }
+  }
+}

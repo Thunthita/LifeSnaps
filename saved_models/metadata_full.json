@@ -1,0 +1,103 @@
+{
+  "feature_cols": [
+    "steps",
+    "distance",
+    "very_active_minutes",
+    "moderately_active_minutes",
+    "lightly_active_minutes",
+    "sedentary_minutes",
+    "TotalActiveMinutes",
+    "ActiveRatio",
+    "StepsPerActiveMin",
+    "DayOfWeek",
+    "IsWeekend",
+    "mindfulness_session",
+    "bpm",
+    "resting_hr",
+    "hr_zone_below",
+    "hr_zone_moderate",
+    "hr_zone_cardio",
+    "hr_zone_peak",
+    "nremhr",
+    "rmssd",
+    "full_sleep_breathing_rate",
+    "filteredDemographicVO2Max",
+    "nightly_temperature",
+    "daily_temperature_variation",
+    "sleep_duration",
+    "minutesToFallAsleep",
+    "minutesAsleep",
+    "minutesAwake",
+    "minutesAfterWakeup",
+    "sleep_efficiency",
+    "sleep_deep_ratio",
+    "sleep_rem_ratio",
+    "sleep_light_ratio",
+    "sleep_wake_ratio",
+    "age",
+    "bmi",
+    "gender_binary",
+    "ALERT",
+    "HAPPY",
+    "NEUTRAL",
+    "RESTED/RELAXED",
+    "SAD",
+    "TENSE/ANXIOUS",
+    "TIRED",
+    "ENTERTAINMENT",
+    "GYM",
+    "HOME",
+    "HOME_OFFICE",
+    "OTHER",
+    "OUTDOORS",
+    "TRANSIT",
+    "WORK/SCHOOL"
+  ],
+  "target": "calories",
+  "n_samples": 6638,
+  "n_users": 71,
+  "cv_strategy": "GroupKFold (3 splits, grouped by user)",
+  "notebook": "01_calories_regression (full feature set)",
+  "models": {
+    "Linear Regression": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/linear_regression_gkf_tuned_full.joblib",
+      "gkf_mae": 323.72,
+      "gkf_r2": 0.5404
+    },
+    "Ridge": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/ridge_gkf_tuned_full.joblib",
+      "gkf_mae": 321.49,
+      "gkf_r2": 0.5986
+    },
+    "Lasso": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/lasso_gkf_tuned_full.joblib",
+      "gkf_mae": 310.36,
+      "gkf_r2": 0.6313
+    },
+    "ElasticNet": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/elasticnet_gkf_tuned_full.joblib",
+      "gkf_mae": 321.03,
+      "gkf_r2": 0.6002
+    },
+    "Random Forest": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/random_forest_gkf_tuned_full.joblib",
+      "gkf_mae": 281.09,
+      "gkf_r2": 0.6554
+    },
+    "Gradient Boosting": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/gradient_boosting_gkf_tuned_full.joblib",
+      "gkf_mae": 276.08,
+      "gkf_r2": 0.6565
+    },
+    "XGBoost": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/xgboost_gkf_tuned_full.joblib",
+      "gkf_mae": 278.94,
+      "gkf_r2": 0.6455
+    },
+    "LightGBM": {
+      "file": "/Users/thunthita/VISTEC/LifeSnaps/saved_models/lightgbm_gkf_tuned_full.joblib",
+      "gkf_mae": 281.92,
+      "gkf_r2": 0.6529
+    }
+  }
+}

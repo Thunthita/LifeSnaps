@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:api.semanticscholar.org)",
+      "WebFetch(domain:scholar.google.com)",
+      "WebFetch(domain:pubmed.ncbi.nlm.nih.gov)",
+      "WebFetch(domain:www.mdpi.com)"
+    ]
+  }
+}
